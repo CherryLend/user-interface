@@ -1,5 +1,6 @@
 import { cryptoData, token, tvlData } from "@/data";
-import Activity from "@/components/Acitvity";
+
+import Activity from "@/components/Activity";
 import Layout from "@/layouts";
 import LoansSection from "@/components/LoansSection";
 import TVLOverview from "@/components/TVLOverview";

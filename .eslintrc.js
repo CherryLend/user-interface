@@ -10,7 +10,7 @@ module.exports = {
     "import/no-unused-modules": "warn",
     "unused-imports/no-unused-imports": "warn",
     "import/order": [
-      "warn",
+      "off",
       {
         groups: [
           "builtin",
@@ -18,7 +18,6 @@ module.exports = {
           "internal",
           ["parent", "sibling", "index"],
         ],
-        "newlines-between": "always",
       },
     ],
   },

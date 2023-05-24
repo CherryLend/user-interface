@@ -1,23 +1,22 @@
 import { HiMenu, HiOutlineMoon, HiOutlineSun, HiX } from "react-icons/hi";
-import Image from "next/image";
-import Link from "next/link";
-import { Roboto } from "next/font/google";
-import { useRouter } from "next/router";
-import { useState } from "react";
 
+import CryptoWallet from "./CryptoWallet";
 import HistoryIcon from "@/icons/HistoryIcon";
+import Image from "next/image";
 import LeftCherryDark from "@/assets/img/left-cherry-dark.png";
 import LeftCherryLight from "@/assets/img/left-cherry-light.png";
+import Link from "next/link";
 import Logo from "@/assets/img/CherryLendLogo.png";
 import LogoDark from "@/assets/img/CherryLendLogoDark.png";
+import NavButton from "./NavButton";
 import RightCherryDark from "@/assets/img/right-cherry-dark.png";
 import RightCherryLight from "@/assets/img/right-cherry-light.png";
+import { Roboto } from "next/font/google";
 import SettingsIcon from "@/icons/SettingsIcon";
 import { WalletType } from "@/types";
 import { useDarkMode } from "@/contexts/DarkModeContext";
-
-import NavButton from "./NavButton";
-import CryptoWallet from "./CryptoWallet";
+import { useRouter } from "next/router";
+import { useState } from "react";
 
 interface NavLink {
   href: string;
@@ -35,21 +34,22 @@ const font = Roboto({
   subsets: ["latin"],
 });
 
-const wallet: WalletType = {
-  name: "Eternl",
-  address: "addr1e5u8jg7mftth5u6x9d0rs0c6rua58y7gxqx6lyz1h",
-  token: {
-    amount: 3366.43,
-    symbol: "₳",
-  },
-};
-
 const Navbar: React.FC = () => {
-  const [menuOpen, setMenuOpen] = useState(false);
   const { isDarkMode, toggleDarkMode } = useDarkMode();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [wallet, setWallet] = useState<WalletType>({
+    name: "Eternl",
+    address: "addr1e5u8jg7mftth5u6x9d0rs0c6rua58y7gxqx6lyz1h",
+    token: {
+      amount: 3366.43,
+      symbol: "₳",
+    },
+  });
   const router = useRouter();
 
-  console.log("Navbar", isDarkMode);
+  const handleWalletSelect = (walletName: string) => {
+    setWallet({ ...wallet, name: walletName });
+  };
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
@@ -113,7 +113,10 @@ const Navbar: React.FC = () => {
           </div>
           <div className="-mr-2 flex space-x-2 items-center my-3">
             <div className="hidden xl:block">
-              <CryptoWallet wallet={wallet} />
+              <CryptoWallet
+                wallet={wallet}
+                onWalletSelect={handleWalletSelect}
+              />
             </div>
             <NavButton
               onClick={toggleDarkMode}

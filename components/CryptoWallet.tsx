@@ -1,11 +1,13 @@
 import { Archivo } from "next/font/google";
 import Image from "next/image";
-import { useState } from "react";
-
+import Modal from "./Modal";
+import RowButtonCard from "./RowButtonCard";
 import { WalletType } from "@/types";
+import { useState } from "react";
 
 type CryptoWalletProps = {
   wallet?: WalletType | null;
+  onWalletSelect?: (walletName: string) => void;
 };
 
 const font = Archivo({
@@ -13,7 +15,7 @@ const font = Archivo({
   subsets: ["latin"],
 });
 
-const CryptoWallet = ({ wallet }: CryptoWalletProps) => {
+const CryptoWallet = ({ wallet, onWalletSelect }: CryptoWalletProps) => {
   const [copied, setCopied] = useState(false);
   const [walletConnected, setWalletConnected] = useState(false);
   const formattedAmount = wallet?.token.amount.toLocaleString();
@@ -21,6 +23,15 @@ const CryptoWallet = ({ wallet }: CryptoWalletProps) => {
     0,
     5
   )}...${wallet?.address.slice(-8)}`;
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(wallet?.address ?? "");
@@ -29,6 +40,8 @@ const CryptoWallet = ({ wallet }: CryptoWalletProps) => {
       setCopied(false);
     }, 1000);
   };
+
+  const wallets = ["Eternl", "Uphold", "Exodus"];
 
   return (
     <>
@@ -50,7 +63,7 @@ const CryptoWallet = ({ wallet }: CryptoWalletProps) => {
                 <div className="flex-shrink-0 text-xs">
                   <Image
                     className=""
-                    src={`/images/${wallet?.name.toLowerCase()}.png`}
+                    src={`/images/wallets/${wallet?.name.toLowerCase()}.png`}
                     alt="Wallet Logo"
                     width={24}
                     height={24}
@@ -67,12 +80,33 @@ const CryptoWallet = ({ wallet }: CryptoWalletProps) => {
         </div>
       ) : (
         <button
-          onClick={() => setWalletConnected(true)}
+          onClick={openModal}
           className={`z-10 border border-black dark:border-white py-3 px-5 uppercase font-bold rounded-lg hover:bg-black/10 leading-none active:scale-90 transition ${font.className}`}
         >
           Connect Wallet
         </button>
       )}
+      <Modal
+        isOpen={isModalOpen}
+        onRequestClose={closeModal}
+        title={`Select a wallet`}
+      >
+        <div className="font-bold p-4 flex flex-col space-y-4">
+          {wallets.map((w: string) => (
+            <RowButtonCard
+              key={w}
+              onClick={() => {
+                //@ts-ignore
+                onWalletSelect?.(w);
+                setWalletConnected(true);
+                closeModal();
+              }}
+              imageSrc={`/images/wallets/${w.toLowerCase()}.png`}
+              text={w}
+            />
+          ))}
+        </div>
+      </Modal>
     </>
   );
 };
